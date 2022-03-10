@@ -49,8 +49,8 @@ function gameInitialization() {
     "keydown",
     function (event) {
       if (event.key === " ") {
-        if (playerTank.isFiring === false) {
-          bullet = playerTank.fire();
+        if (playerTank.isFiring === false && !playerTank.bullet) {
+          playerTank.fire();
         }
       } else {
         playerTank.changeDirection(event);
@@ -79,8 +79,8 @@ function gameStep() {
     playerTank.move();
     isPlayerTankMove = false;
   }
-  if (bullet) {
-    bullet.move();
+  if (playerTank.bullet) {
+    playerTank.bullet.move();
   }
 
   // playerTank.move();
@@ -96,4 +96,4 @@ function gameStep() {
    */
 }
 
-export { gameTimerInterval };
+export { gameTimerInterval, playerTank };

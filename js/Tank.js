@@ -1,5 +1,6 @@
 import Bullet from "./Bullet.js";
 import { cellSize, map } from "./map.js";
+import { playerTank } from "./main.js";
 
 export default class Tank {
   constructor(x, y, mark) {
@@ -12,6 +13,7 @@ export default class Tank {
     this.previousState = "up";
     this.mark = mark;
     this.isFiring = false;
+    this.bullet = null;
   }
 
   move() {
@@ -96,5 +98,21 @@ export default class Tank {
     this.isFiring = true;
     this.bullet = new Bullet(this.x, this.y, this.direction, this.elem);
     return this.bullet;
+  }
+
+  validateBorder() {
+    if (this.bullet) {
+      if (
+        this.bullet.x < 0 ||
+        this.bullet.y < 0 ||
+        this.bullet.y > map.length * cellSize ||
+        this.bullet.x >= map[0].length * cellSize
+      ) {
+        console.log("border");
+        this.bullet = null;
+        this.isFiring = false;
+        console.log("here");
+      }
+    }
   }
 }

@@ -1,5 +1,5 @@
 import { cellSize, bulletSize, map } from "./map.js";
-import { gameTimerInterval } from "./main.js";
+import { gameTimerInterval, playerTank } from "./main.js";
 
 export default class Bullet {
   constructor(x, y, direction, tank) {
@@ -84,38 +84,26 @@ export default class Bullet {
         }, gameTimerInterval);
         break;
     }
-    // this.validateBorder();
   }
 
   up() {
     this.y = this.y - bulletSize;
     this.update();
-    this.validateBorder();
+    playerTank.validateBorder();
   }
   down() {
     this.y = this.y + bulletSize;
     this.update();
-    this.validateBorder();
+    playerTank.validateBorder();
   }
   left() {
     this.x = this.x - bulletSize;
     this.update();
-    this.validateBorder();
+    playerTank.validateBorder();
   }
   right() {
     this.x = this.x + bulletSize;
     this.update();
-    this.validateBorder();
-  }
-
-  validateBorder() {
-    if (
-      this.x < 0 ||
-      this.y < 0 ||
-      this.y > map.length * cellSize ||
-      this.x >= map[0].length * cellSize
-    ) {
-      console.log("border");
-    }
+    playerTank.validateBorder();
   }
 }
