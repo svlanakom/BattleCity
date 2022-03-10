@@ -1,4 +1,4 @@
-import { cellSize, bulletSize, map } from "./map.js";
+import { cellSize, bulletSize, map, mapLegend } from "./map.js";
 import { gameTimerInterval, playerTank } from "./main.js";
 
 export default class Bullet {
@@ -12,6 +12,7 @@ export default class Bullet {
     this.style();
     this.update();
     this.addBulletToMap();
+    // this.move();
   }
   draw() {
     let dif = cellSize - bulletSize;
@@ -34,6 +35,23 @@ export default class Bullet {
     }
   }
 
+  validate() {
+    if (
+      this.x <= 0 ||
+      this.x + bulletSize >= map[0].length * cellSize ||
+      this.y <= 0 ||
+      this.y + bulletSize >= map.length * cellSize ||
+      map[Math.floor(this.y / cellSize)][Math.floor(this.x / cellSize)] ===
+        mapLegend.wall ||
+      map[Math.floor((this.y + bulletSize) / cellSize)][
+        Math.floor((this.x + bulletSize) / cellSize)
+      ] === mapLegend.wall
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   style() {
     this.el.classList.add("bullet");
   }
@@ -51,34 +69,45 @@ export default class Bullet {
     let timerId;
     switch (this.direction) {
       case "up":
-        timerId = setInterval(() => this.up(), gameTimerInterval / bulletSize);
+        timerId = setInterval(() => {
+          if (!this.validate()) {
+          } else {
+            this.up();
+          }
+        }, gameTimerInterval / cellSize); // bulletSize();
         setTimeout(() => {
           clearInterval(timerId);
         }, gameTimerInterval);
         break;
       case "down":
-        timerId = setInterval(
-          () => this.down(),
-          gameTimerInterval / bulletSize
-        );
+        timerId = setInterval(() => {
+          if (!this.validate()) {
+          } else {
+            this.down();
+          }
+        }, gameTimerInterval / cellSize);
         setTimeout(() => {
           clearInterval(timerId);
         }, gameTimerInterval);
         break;
       case "left":
-        timerId = setInterval(
-          () => this.left(),
-          gameTimerInterval / bulletSize
-        );
+        timerId = setInterval(() => {
+          if (!this.validate()) {
+          } else {
+            this.left();
+          }
+        }, gameTimerInterval / cellSize);
         setTimeout(() => {
           clearInterval(timerId);
         }, gameTimerInterval);
         break;
       case "right":
-        timerId = setInterval(
-          () => this.right(),
-          gameTimerInterval / bulletSize
-        );
+        timerId = setInterval(() => {
+          if (!this.validate()) {
+          } else {
+            this.right();
+          }
+        }, gameTimerInterval / cellSize);
         setTimeout(() => {
           clearInterval(timerId);
         }, gameTimerInterval);
@@ -87,23 +116,23 @@ export default class Bullet {
   }
 
   up() {
-    this.y = this.y - bulletSize;
+    this.y = this.y - 1; // bulletSize;
     this.update();
-    playerTank.validateBorder();
+    // playerTank.validateBorder();
   }
   down() {
-    this.y = this.y + bulletSize;
+    this.y = this.y + 1;
     this.update();
-    playerTank.validateBorder();
+    // playerTank.validateBorder();
   }
   left() {
-    this.x = this.x - bulletSize;
+    this.x = this.x - 1;
     this.update();
-    playerTank.validateBorder();
+    // playerTank.validateBorder();
   }
   right() {
-    this.x = this.x + bulletSize;
+    this.x = this.x + 1;
     this.update();
-    playerTank.validateBorder();
+    // playerTank.validateBorder();
   }
 }

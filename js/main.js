@@ -1,4 +1,4 @@
-import { map, mapLegend, cellSize } from "./map.js";
+import { map, mapLegend, cellSize, bulletSize } from "./map.js";
 import PlayerTank from "./PlayerTank.js";
 import EnemyTank from "./EnemyTank.js";
 const gameTimerInterval = 1000;
@@ -74,13 +74,38 @@ function gameLoop() {
 function gameStep() {
   enemyTanks.forEach((tank) => {
     tank.move();
+    if (Math.random() < 0.1) {
+      tank.fire();
+    }
+    if (tank.bullets) {
+      for (let index = 0; index < tank.bullets.length; ) {
+        if (!tank.bullets[index].validate()) {
+          tank.bullets[index].el.remove();
+          tank.bullets[index] = null;
+          tank.bullets.splice(index, 1);
+        } else {
+          tank.bullets[index].move();
+          index++;
+        }
+      }
+    }
   });
   if (isPlayerTankMove) {
     playerTank.move();
     isPlayerTankMove = false;
   }
-  if (playerTank.bullet) {
-    playerTank.bullet.move();
+  if (playerTank.bullets) {
+    for (let index = 0; index < playerTank.bullets.length; ) {
+      if (!playerTank.bullets[index].validate()) {
+        playerTank.bullets[index].el.remove();
+        playerTank.bullets[index] = null;
+        playerTank.bullets.splice(index, 1);
+      } else {
+        playerTank.bullets[index].move();
+        index++;
+      }
+    }
+    // console.log(playerTank.bullets.length);
   }
 
   // playerTank.move();

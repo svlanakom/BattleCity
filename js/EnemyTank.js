@@ -10,20 +10,22 @@ export default class EnemyTank extends Tank {
     this.rotateTank(180);
   }
 
-  randomDirection() {
-    return directionSet[Math.floor(Math.random() * directionSet.length)];
-  }
+  // randomDirection() {
+  //   return directionSet[Math.floor(Math.random() * directionSet.length)];
+  // }
 
   changeDirection() {
-    this.move();
-  }
-
-  move() {
     if (Math.random() < 0.33) {
-      this.direction = this.randomDirection();
+      // this.direction = this.randomDirection();
+      this.direction =
+        directionSet[Math.floor(Math.random() * directionSet.length)];
     } else {
       this.direction = this.previousState;
     }
-    super.move();
+    this.move();
   }
+
+  // move() {
+  //   super.move();
+  // }
 }
