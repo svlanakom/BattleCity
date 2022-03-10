@@ -63,3 +63,11 @@ main {
   top: 0;
   left: 0;
 }
+
+.bullet {
+  box-sizing: border-box;
+  position: absolute;
+  height: 8px;
+  width: 8px;
+  background-color: aliceblue;
+}
