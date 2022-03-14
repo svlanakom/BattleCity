@@ -24,4 +24,6 @@ const mapLegend = {
 const cellSize = 64;
 const bulletSize = 8;
 
-export { map, mapLegend, cellSize, bulletSize };
+const gameTimerInterval = 1000;
+
+export { map, mapLegend, cellSize, bulletSize, gameTimerInterval };

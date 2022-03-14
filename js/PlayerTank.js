@@ -1,5 +1,5 @@
 import Tank from "./Tank.js";
-import Bullet from "./Bullet.js";
+// import Bullet from "./Bullet.js";
 import { mapLegend } from "./map.js";
 
 export default class PlayerTank extends Tank {

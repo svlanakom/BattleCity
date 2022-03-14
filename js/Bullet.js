@@ -1,5 +1,11 @@
-import { cellSize, bulletSize, map, mapLegend } from "./map.js";
-import { gameTimerInterval, playerTank } from "./main.js";
+import {
+  cellSize,
+  bulletSize,
+  map,
+  mapLegend,
+  gameTimerInterval,
+} from "./map.js";
+// import { gameTimerInterval } from "./main.js";
 
 export default class Bullet {
   constructor(x, y, direction, tank) {
@@ -14,6 +20,7 @@ export default class Bullet {
     this.addBulletToMap();
     // this.move();
   }
+
   draw() {
     let dif = cellSize - bulletSize;
     switch (this.direction) {
@@ -36,20 +43,26 @@ export default class Bullet {
   }
 
   validate() {
+    let result = { res: true, type: undefined };
     if (
       this.x <= 0 ||
       this.x + bulletSize >= map[0].length * cellSize ||
       this.y <= 0 ||
-      this.y + bulletSize >= map.length * cellSize ||
+      this.y + bulletSize >= map.length * cellSize
+    ) {
+      result.res = false;
+      result.type = "border";
+    } else if (
       map[Math.floor(this.y / cellSize)][Math.floor(this.x / cellSize)] ===
         mapLegend.wall ||
       map[Math.floor((this.y + bulletSize) / cellSize)][
         Math.floor((this.x + bulletSize) / cellSize)
       ] === mapLegend.wall
     ) {
-      return false;
+      result.res = false;
+      result.type = "wall";
     }
-    return true;
+    return result;
   }
 
   style() {
@@ -70,7 +83,7 @@ export default class Bullet {
     switch (this.direction) {
       case "up":
         timerId = setInterval(() => {
-          if (!this.validate()) {
+          if (!this.validate().res) {
           } else {
             this.up();
           }
@@ -81,7 +94,7 @@ export default class Bullet {
         break;
       case "down":
         timerId = setInterval(() => {
-          if (!this.validate()) {
+          if (!this.validate().res) {
           } else {
             this.down();
           }
@@ -92,7 +105,7 @@ export default class Bullet {
         break;
       case "left":
         timerId = setInterval(() => {
-          if (!this.validate()) {
+          if (!this.validate().res) {
           } else {
             this.left();
           }
@@ -103,7 +116,7 @@ export default class Bullet {
         break;
       case "right":
         timerId = setInterval(() => {
-          if (!this.validate()) {
+          if (!this.validate().res) {
           } else {
             this.right();
           }
