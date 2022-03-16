@@ -26,4 +26,13 @@ const bulletSize = 8;
 
 const gameTimerInterval = 1000;
 
-export { map, mapLegend, cellSize, bulletSize, gameTimerInterval };
+const directionSet = ["right", "left", "up", "down"];
+
+export {
+  map,
+  mapLegend,
+  cellSize,
+  bulletSize,
+  gameTimerInterval,
+  directionSet,
+};

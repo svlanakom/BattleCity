@@ -14,11 +14,12 @@ export default class Bullet {
     this.y = y;
     this.tank = tank;
     this.direction = direction;
+    this.timerId = null;
     this.draw();
     this.style();
     this.update();
     this.addBulletToMap();
-    // this.move();
+    this.move();
   }
 
   draw() {
@@ -61,6 +62,15 @@ export default class Bullet {
     ) {
       result.res = false;
       result.type = "wall";
+    } else if (
+      map[Math.floor(this.y / cellSize)][Math.floor(this.x / cellSize)] ===
+        mapLegend.enemyBase ||
+      map[Math.floor((this.y + bulletSize) / cellSize)][
+        Math.floor((this.x + bulletSize) / cellSize)
+      ] === mapLegend.enemyBase
+    ) {
+      result.res = false;
+      result.type = "enemy";
     }
     return result;
   }
@@ -79,51 +89,50 @@ export default class Bullet {
     this.el.style["left"] = `${this.x}px`;
   }
   move() {
-    let timerId;
     switch (this.direction) {
       case "up":
-        timerId = setInterval(() => {
+        this.timerId = setInterval(() => {
           if (!this.validate().res) {
           } else {
             this.up();
           }
-        }, gameTimerInterval / cellSize); // bulletSize();
-        setTimeout(() => {
-          clearInterval(timerId);
-        }, gameTimerInterval);
+        }, gameTimerInterval / cellSize / 2); // bulletSize();
+        // setTimeout(() => {
+        //   clearInterval(timerId);
+        // }, gameTimerInterval);
         break;
       case "down":
-        timerId = setInterval(() => {
+        this.timerId = setInterval(() => {
           if (!this.validate().res) {
           } else {
             this.down();
           }
-        }, gameTimerInterval / cellSize);
-        setTimeout(() => {
-          clearInterval(timerId);
-        }, gameTimerInterval);
+        }, gameTimerInterval / cellSize / 2);
+        // setTimeout(() => {
+        //   clearInterval(timerId);
+        // }, gameTimerInterval);
         break;
       case "left":
-        timerId = setInterval(() => {
+        this.timerId = setInterval(() => {
           if (!this.validate().res) {
           } else {
             this.left();
           }
-        }, gameTimerInterval / cellSize);
-        setTimeout(() => {
-          clearInterval(timerId);
-        }, gameTimerInterval);
+        }, gameTimerInterval / cellSize / 2);
+        // setTimeout(() => {
+        //   clearInterval(timerId);
+        // }, gameTimerInterval);
         break;
       case "right":
-        timerId = setInterval(() => {
+        this.timerId = setInterval(() => {
           if (!this.validate().res) {
           } else {
             this.right();
           }
-        }, gameTimerInterval / cellSize);
-        setTimeout(() => {
-          clearInterval(timerId);
-        }, gameTimerInterval);
+        }, gameTimerInterval / cellSize / 2);
+        // setTimeout(() => {
+        //   clearInterval(timerId);
+        // }, gameTimerInterval);
         break;
     }
   }
