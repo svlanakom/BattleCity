@@ -26,19 +26,20 @@ export default class Bullet {
     let dif = cellSize - bulletSize;
     switch (this.direction) {
       case "up":
-        this.x += dif / 2 - 1;
+        this.y -= bulletSize + 1;
+        this.x += dif / 2;
         break;
       case "down":
-        this.x += dif / 2 + 1;
-        this.y += dif;
+        this.x += dif / 2;
+        this.y += cellSize + 1;
         break;
       case "left":
-        // this.x += 29;
+        this.x -= bulletSize + 1;
         this.y += dif / 2;
         break;
       case "right":
-        this.x += dif;
-        this.y += dif / 2 - 1;
+        this.x += cellSize + 1;
+        this.y += dif / 2;
         break;
     }
   }
@@ -68,6 +69,15 @@ export default class Bullet {
       map[Math.floor((this.y + bulletSize) / cellSize)][
         Math.floor((this.x + bulletSize) / cellSize)
       ] === mapLegend.enemyBase
+    ) {
+      result.res = false;
+      result.type = "enemy";
+    } else if (
+      map[Math.floor(this.y / cellSize)][Math.floor(this.x / cellSize)] ===
+        mapLegend.playerBase ||
+      map[Math.floor((this.y + bulletSize) / cellSize)][
+        Math.floor((this.x + bulletSize) / cellSize)
+      ] === mapLegend.playerBase
     ) {
       result.res = false;
       result.type = "enemy";

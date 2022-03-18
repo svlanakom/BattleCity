@@ -16,9 +16,10 @@ export default class Game {
     this.isGameOver = false;
     this.isPlayerTankMove = false;
     this.playerLifeCount = 3;
-    this.enemyTanksCount = 21;
+    this.enemyTanksCount = 3;
     this.enemyTanksBases = [];
     this.playerTankBase = null;
+    this.bullets = [];
 
     this.gameInitialization();
   }
@@ -49,6 +50,7 @@ export default class Game {
           this.enemyTanks.push(
             new EnemyTank(j * cellSize, i * cellSize, baseId)
           );
+          this.enemyTanksCount--;
           this.enemyTanksBases.push([j, i]);
           baseId++;
         }
@@ -68,7 +70,7 @@ export default class Game {
       (event) => {
         if (event.key === " ") {
           if (this.playerTank.isFiring === false && !this.playerTank.bullet) {
-            this.playerTank.fire();
+            this.bullets.push(this.playerTank.fire());
           }
         } else {
           this.playerTank.changeDirection(event);
@@ -79,18 +81,18 @@ export default class Game {
     );
   }
 
-  validateBulets(tank) {
-    for (let index = 0; index < tank.bullets.length; ) {
-      if (!tank.bullets[index].validate().res) {
-        if (tank.bullets[index].validate().type === "wall") {
-          let [x, y] = [tank.bullets[index].x, tank.bullets[index].y];
+  validateBulets() {
+    for (let index = 0; index < this.bullets.length; ) {
+      if (!this.bullets[index].validate().res) {
+        if (this.bullets[index].validate().type === "wall") {
+          let [x, y] = [this.bullets[index].x, this.bullets[index].y];
           let wall = this.gameMap.getElementsByClassName(
             `wall${Math.floor(y / cellSize)}${Math.floor(x / cellSize)}`
           );
           if (wall.length === 0) {
             [x, y] = [
-              tank.bullets[index].x + bulletSize,
-              tank.bullets[index].y + bulletSize,
+              this.bullets[index].x + bulletSize,
+              this.bullets[index].y + bulletSize,
             ];
             wall = this.gameMap.getElementsByClassName(
               `wall${Math.floor(y / cellSize)}${Math.floor(x / cellSize)}`
@@ -98,46 +100,73 @@ export default class Game {
           }
           wall[0].remove();
           map[Math.floor(y / cellSize)][Math.floor(x / cellSize)] = 0;
-        } else if (tank.bullets[index].validate().type === "enemy") {
+        } else if (this.bullets[index].validate().type === "enemy") {
           let [x1, y1] = [
-            Math.floor(tank.bullets[index].x / cellSize),
-            Math.floor(tank.bullets[index].y / cellSize),
+            Math.floor(this.bullets[index].x / cellSize),
+            Math.floor(this.bullets[index].y / cellSize),
           ];
           let [x2, y2] = [
-            Math.floor((tank.bullets[index].x + bulletSize) / cellSize),
-            Math.floor((tank.bullets[index].y + bulletSize) / cellSize),
+            Math.floor((this.bullets[index].x + bulletSize) / cellSize),
+            Math.floor((this.bullets[index].y + bulletSize) / cellSize),
           ];
-          console.log("enemy collide");
           for (let i = 0; i < this.enemyTanks.length; ) {
             if (
-              (this.enemyTanks[i].mapRow === x1 &&
+              ((this.enemyTanks[i].mapRow === x1 &&
                 this.enemyTanks[i].mapColumn === y1) ||
-              (this.enemyTanks[i].mapRow === x2 &&
-                this.enemyTanks[i].mapColumn === y2)
+                (this.enemyTanks[i].mapRow === x2 &&
+                  this.enemyTanks[i].mapColumn === y2)) &&
+              /*this.enemyTanks[i] !== this.bullets[index].tank*/ this.bullets[
+                index
+              ].tank === this.playerTank
             ) {
-              console.log(this.enemyTanks[i]);
-              let enemy = new EnemyTank(
-                this.enemyTanksBases[this.enemyTanks[i].enemyBaseId][0] *
-                  cellSize,
-                this.enemyTanksBases[this.enemyTanks[i].enemyBaseId][1] *
-                  cellSize,
-                this.enemyTanks[i].enemyBaseId
-              );
-              this.enemyTanks.push(enemy);
-              this.gameMap.appendChild(enemy.elem);
               map[this.enemyTanks[i].mapColumn][this.enemyTanks[i].mapRow] = 0;
               this.enemyTanks[i].elem.remove();
               this.enemyTanks[i] = null;
               this.enemyTanks.splice(i, 1);
+
+              if (this.enemyTanksCount > 0) {
+                let enemy = new EnemyTank(
+                  this.enemyTanksBases[this.enemyTanks[i].enemyBaseId][0] *
+                    cellSize,
+                  this.enemyTanksBases[this.enemyTanks[i].enemyBaseId][1] *
+                    cellSize,
+                  this.enemyTanks[i].enemyBaseId
+                );
+                this.enemyTanksCount--;
+                map[enemy.mapColumn][enemy.mapRow] = enemy.mark;
+                this.gameMap.appendChild(enemy.elem);
+                enemy.update();
+                this.enemyTanks.push(enemy);
+              }
+              break;
             } else {
               i++;
             }
           }
+          if (
+            ((this.playerTank.mapRow === x1 &&
+              this.playerTank.mapColumn === y1) ||
+              (this.playerTank.mapRow === x2 &&
+                this.playerTank.mapColumn === y2)) &&
+            this.playerTank !== this.bullets[index].tank
+          ) {
+            map[this.playerTank.mapColumn][this.playerTank.mapRow] = 0;
+            this.playerTank.elem.remove();
+            this.playerTank = new PlayerTank(
+              this.playerTankBase[0] * cellSize,
+              this.playerTankBase[1] * cellSize
+            );
+            this.playerLifeCount--;
+            map[this.playerTank.mapColumn][this.playerTank.mapRow] =
+              this.playerTank.mark;
+            this.gameMap.appendChild(this.playerTank.elem);
+            this.playerTank.update();
+          }
         }
-        clearInterval(tank.bullets[index].timerId);
-        tank.bullets[index].el.remove();
-        tank.bullets[index] = null;
-        tank.bullets.splice(index, 1);
+        clearInterval(this.bullets[index].timerId);
+        this.bullets[index].el.remove();
+        this.bullets[index] = null;
+        this.bullets.splice(index, 1);
       } else {
         index++;
       }
@@ -145,72 +174,27 @@ export default class Game {
   }
 
   gameStep() {
+    if (this.bullets) {
+      this.validateBulets();
+    }
+    if (this.enemyTanks.length === 0) {
+      alert("Wictory!");
+      location.reload();
+    } else if (this.playerLifeCount === 0) {
+      alert("You lose!");
+      location.reload();
+    }
     if (this.isPlayerTankMove) {
       this.playerTank.move();
       this.isPlayerTankMove = false;
     }
-    if (this.playerTank.bullets) {
-      this.validateBulets(this.playerTank);
-      // for (let index = 0; index < this.playerTank.bullets.length;) {
-      //     if (!this.playerTank.bullets[index].validate().res) {
-      //         if (this.playerTank.bullets[index].validate().type === "wall") {
-      //             let [x, y] = [this.playerTank.bullets[index].x, this.playerTank.bullets[index].y];
-      //             let wall = this.gameMap.getElementsByClassName(`wall${Math.floor(y / cellSize)}${Math.floor(x / cellSize)}`);
-      //             if (wall.length === 0) {
-      //                 [x, y] = [this.playerTank.bullets[index].x + bulletSize, this.playerTank.bullets[index].y + bulletSize]
-      //                 wall = this.gameMap.getElementsByClassName(`wall${Math.floor(y / cellSize)}${Math.floor(x / cellSize)}`);
-      //             }
-      //             wall[0].remove();
-      //             map[Math.floor(y / cellSize)][Math.floor(x / cellSize)] = 0;
-      //         }
-      //         clearInterval(this.playerTank.bullets[index].timerId);
-      //         this.playerTank.bullets[index].el.remove();
-      //         this.playerTank.bullets[index] = null;
-      //         this.playerTank.bullets.splice(index, 1);
-      //     } else {
-      //         // this.playerTank.bullets[index].move();
-      //         index++;
-      //     }
-      // }
-    }
     this.enemyTanks.forEach((tank) => {
       tank.move();
-      // if (Math.random() < 0.1) {
-      //     tank.fire();
-      // }
-    });
-    this.enemyTanks.forEach((tank) => {
-      // tank.move();
-      // if (Math.random() < 0.1) {
-      //     tank.fire();
-      // }
-      if (tank.bullets) {
-        this.validateBulets(tank);
-        // for (let index = 0; index < tank.bullets.length;) {
-        //     if (!tank.bullets[index].validate().res) {
-        //         if (tank.bullets[index].validate().type === "wall") {
-        //             let [x, y] = [tank.bullets[index].x, tank.bullets[index].y];
-        //             let wall = this.gameMap.getElementsByClassName(`wall${Math.floor(y / cellSize)}${Math.floor(x / cellSize)}`);
-        //             if (wall.length === 0) {
-        //                 [x, y] = [tank.bullets[index].x + bulletSize, tank.bullets[index].y + bulletSize]
-        //                 wall = this.gameMap.getElementsByClassName(`wall${Math.floor(y / cellSize)}${Math.floor(x / cellSize)}`);
-        //             }
-        //             wall[0].remove();
-        //             map[Math.floor(y / cellSize)][Math.floor(x / cellSize)] = 0;
-        //         }
-        //         clearInterval(tank.bullets[index].timerId);
-        //         tank.bullets[index].el.remove();
-        //         tank.bullets[index] = null;
-        //         tank.bullets.splice(index, 1);
-        //     } else {
-        //         // tank.bullets[index].move();
-        //         index++;
-        //     }
-        // }
+      if (Math.random() < 0.2) {
+        this.bullets.push(tank.fire());
       }
     });
 
-    // playerTank.move();
     /**
      * это то самое место, где стоит делать основные шаги игрового цикла
      * например, как нам кажется, можно было бы сделать следующее

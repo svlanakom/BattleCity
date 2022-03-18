@@ -1,6 +1,6 @@
 import Bullet from "./Bullet.js";
 // import { gameTimerInterval } from "./main.js";
-import { cellSize, map, gameTimerInterval } from "./map.js";
+import { cellSize, map, gameTimerInterval, directionSet } from "./map.js";
 // import { playerTank } from "./main.js";
 
 export default class Tank {
@@ -14,7 +14,6 @@ export default class Tank {
     this.previousState = "up";
     this.mark = mark;
     this.isFiring = false;
-    this.bullets = [];
   }
 
   changeDirection() {
@@ -28,6 +27,7 @@ export default class Tank {
   }
 
   move() {
+    // this.changeDirection();
     switch (this.direction) {
       case "up":
         this.rotateTank(0);
@@ -57,7 +57,6 @@ export default class Tank {
         } else {
           this.changeDirection();
         }
-
         break;
 
       case "left":
@@ -110,7 +109,7 @@ export default class Tank {
     setTimeout(() => {
       this.isFiring = false;
     }, gameTimerInterval);
-    this.bullets.push(new Bullet(this.x, this.y, this.direction, this.elem));
+    return new Bullet(this.x, this.y, this.direction, this);
     // return this.bullet;
   }
 

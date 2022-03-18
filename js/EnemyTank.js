@@ -14,16 +14,16 @@ export default class EnemyTank extends Tank {
   //   return directionSet[Math.floor(Math.random() * directionSet.length)];
   // }
 
-  changeDirection() {
-    if (Math.random() < 0.33) {
-      // this.direction = this.randomDirection();
-      this.direction =
-        directionSet[Math.floor(Math.random() * directionSet.length)];
-    } else {
-      this.direction = this.previousState;
-    }
-    this.move();
-  }
+  // changeDirection() {
+  //   if (Math.random() < 0.33) {
+  //     // this.direction = this.randomDirection();
+  //     this.direction =
+  //       directionSet[Math.floor(Math.random() * directionSet.length)];
+  //   } else {
+  //     this.direction = this.previousState;
+  //   }
+  //   this.move();
+  // }
 
   // move() {
   //   super.move();
