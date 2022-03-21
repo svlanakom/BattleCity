@@ -1,7 +1,6 @@
 import Bullet from "./Bullet.js";
-// import { gameTimerInterval } from "./main.js";
-import { cellSize, map, gameTimerInterval, directionSet } from "./map.js";
-// import { playerTank } from "./main.js";
+import { map } from "./map.js";
+import { cellSize, gameTimerInterval, directionSet } from "./conf.js";
 
 export default class Tank {
   constructor(x, y, mark) {

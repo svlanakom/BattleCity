@@ -1,15 +1,9 @@
-import {
-  cellSize,
-  bulletSize,
-  map,
-  mapLegend,
-  gameTimerInterval,
-} from "./map.js";
-// import { gameTimerInterval } from "./main.js";
+import { map, mapLegend } from "./map.js";
+import { cellSize, bulletSize, gameTimerInterval } from "./conf.js";
 
 export default class Bullet {
   constructor(x, y, direction, tank) {
-    this.el = document.createElement("div");
+    this.elem = document.createElement("div");
     this.x = x;
     this.y = y;
     this.tank = tank;
@@ -44,16 +38,15 @@ export default class Bullet {
     }
   }
 
-  validate() {
-    let result = { res: true, type: undefined };
+  isPosibleMove() {
+    let res = true;
     if (
       this.x <= 0 ||
       this.x + bulletSize >= map[0].length * cellSize ||
       this.y <= 0 ||
       this.y + bulletSize >= map.length * cellSize
     ) {
-      result.res = false;
-      result.type = "border";
+      res = false;
     } else if (
       map[Math.floor(this.y / cellSize)][Math.floor(this.x / cellSize)] ===
         mapLegend.wall ||
@@ -61,8 +54,7 @@ export default class Bullet {
         Math.floor((this.x + bulletSize) / cellSize)
       ] === mapLegend.wall
     ) {
-      result.res = false;
-      result.type = "wall";
+      res = false;
     } else if (
       map[Math.floor(this.y / cellSize)][Math.floor(this.x / cellSize)] ===
         mapLegend.enemyBase ||
@@ -70,8 +62,7 @@ export default class Bullet {
         Math.floor((this.x + bulletSize) / cellSize)
       ] === mapLegend.enemyBase
     ) {
-      result.res = false;
-      result.type = "enemy";
+      res = false;
     } else if (
       map[Math.floor(this.y / cellSize)][Math.floor(this.x / cellSize)] ===
         mapLegend.playerBase ||
@@ -79,41 +70,72 @@ export default class Bullet {
         Math.floor((this.x + bulletSize) / cellSize)
       ] === mapLegend.playerBase
     ) {
+      res = false;
+    }
+    return res;
+  }
+
+  validate(gameObjects) {
+    let result = { res: true };
+    if (
+      this.x <= 0 ||
+      this.x + bulletSize >= map[0].length * cellSize ||
+      this.y <= 0 ||
+      this.y + bulletSize >= map.length * cellSize
+    ) {
       result.res = false;
-      result.type = "enemy";
+    } else {
+      gameObjects.forEach((gameObject) => {
+        let [x1, y1] = [
+          Math.floor(this.x / cellSize),
+          Math.floor(this.y / cellSize),
+        ];
+        let [x2, y2] = [
+          Math.floor((this.x + bulletSize) / cellSize),
+          Math.floor((this.y + bulletSize) / cellSize),
+        ];
+        if (
+          (gameObject.mapRow === x1 && gameObject.mapColumn === y1) ||
+          (gameObject.mapRow === x2 && gameObject.mapColumn === y2)
+        ) {
+          result.res = false;
+          result.gameObject = gameObject;
+        }
+      });
     }
     return result;
   }
 
   style() {
-    this.el.classList.add("bullet");
+    this.elem.classList.add("bullet");
   }
 
   addBulletToMap() {
     let gameMap = document.querySelector("#game-map");
-    gameMap.appendChild(this.el);
+    gameMap.appendChild(this.elem);
   }
 
   update() {
-    this.el.style["top"] = `${this.y}px`;
-    this.el.style["left"] = `${this.x}px`;
+    this.elem.style["top"] = `${this.y}px`;
+    this.elem.style["left"] = `${this.x}px`;
   }
+
   move() {
     switch (this.direction) {
       case "up":
         this.timerId = setInterval(() => {
-          if (!this.validate().res) {
+          if (!this.isPosibleMove()) {
           } else {
             this.up();
           }
-        }, gameTimerInterval / cellSize / 2); // bulletSize();
+        }, gameTimerInterval / cellSize / 2);
         // setTimeout(() => {
         //   clearInterval(timerId);
         // }, gameTimerInterval);
         break;
       case "down":
         this.timerId = setInterval(() => {
-          if (!this.validate().res) {
+          if (!this.isPosibleMove()) {
           } else {
             this.down();
           }
@@ -124,7 +146,7 @@ export default class Bullet {
         break;
       case "left":
         this.timerId = setInterval(() => {
-          if (!this.validate().res) {
+          if (!this.isPosibleMove()) {
           } else {
             this.left();
           }
@@ -135,7 +157,7 @@ export default class Bullet {
         break;
       case "right":
         this.timerId = setInterval(() => {
-          if (!this.validate().res) {
+          if (!this.isPosibleMove()) {
           } else {
             this.right();
           }

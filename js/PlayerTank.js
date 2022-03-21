@@ -1,6 +1,6 @@
 import Tank from "./Tank.js";
-// import Bullet from "./Bullet.js";
 import { mapLegend } from "./map.js";
+import { directionKeys } from "./conf.js";
 
 export default class PlayerTank extends Tank {
   constructor(x, y) {
@@ -11,16 +11,16 @@ export default class PlayerTank extends Tank {
   changeDirection(event) {
     if (event !== undefined) {
       switch (event.key) {
-        case "ArrowLeft":
+        case directionKeys["left"]:
           this.direction = "left";
           break;
-        case "ArrowRight":
+        case directionKeys["right"]:
           this.direction = "right";
           break;
-        case "ArrowUp":
+        case directionKeys["up"]:
           this.direction = "up";
           break;
-        case "ArrowDown":
+        case directionKeys["down"]:
           this.direction = "down";
           break;
         default:

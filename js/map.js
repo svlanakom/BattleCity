@@ -21,18 +21,4 @@ const mapLegend = {
   wall: 3,
 };
 
-const cellSize = 64;
-const bulletSize = 8;
-
-const gameTimerInterval = 1000;
-
-const directionSet = ["right", "left", "up", "down"];
-
-export {
-  map,
-  mapLegend,
-  cellSize,
-  bulletSize,
-  gameTimerInterval,
-  directionSet,
-};
+export { map, mapLegend };
