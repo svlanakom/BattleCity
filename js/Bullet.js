@@ -129,9 +129,7 @@ export default class Bullet {
             this.up();
           }
         }, gameTimerInterval / cellSize / 2);
-        // setTimeout(() => {
-        //   clearInterval(timerId);
-        // }, gameTimerInterval);
+
         break;
       case "down":
         this.timerId = setInterval(() => {
@@ -140,9 +138,7 @@ export default class Bullet {
             this.down();
           }
         }, gameTimerInterval / cellSize / 2);
-        // setTimeout(() => {
-        //   clearInterval(timerId);
-        // }, gameTimerInterval);
+
         break;
       case "left":
         this.timerId = setInterval(() => {
@@ -151,9 +147,7 @@ export default class Bullet {
             this.left();
           }
         }, gameTimerInterval / cellSize / 2);
-        // setTimeout(() => {
-        //   clearInterval(timerId);
-        // }, gameTimerInterval);
+
         break;
       case "right":
         this.timerId = setInterval(() => {
@@ -162,31 +156,25 @@ export default class Bullet {
             this.right();
           }
         }, gameTimerInterval / cellSize / 2);
-        // setTimeout(() => {
-        //   clearInterval(timerId);
-        // }, gameTimerInterval);
+
         break;
     }
   }
 
   up() {
-    this.y = this.y - 1; // bulletSize;
+    this.y = this.y - 1;
     this.update();
-    // playerTank.validateBorder();
   }
   down() {
     this.y = this.y + 1;
     this.update();
-    // playerTank.validateBorder();
   }
   left() {
     this.x = this.x - 1;
     this.update();
-    // playerTank.validateBorder();
   }
   right() {
     this.x = this.x + 1;
     this.update();
-    // playerTank.validateBorder();
   }
 }

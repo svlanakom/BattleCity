@@ -26,7 +26,6 @@ export default class Tank {
   }
 
   move() {
-    // this.changeDirection();
     switch (this.direction) {
       case "up":
         this.rotateTank(0);
@@ -109,22 +108,5 @@ export default class Tank {
       this.isFiring = false;
     }, gameTimerInterval);
     return new Bullet(this.x, this.y, this.direction, this);
-    // return this.bullet;
   }
-
-  // validateBorder() {
-  //   if (this.bullet) {
-  //     if (
-  //       this.bullet.x < 0 ||
-  //       this.bullet.y < 0 ||
-  //       this.bullet.y > map.length * cellSize ||
-  //       this.bullet.x >= map[0].length * cellSize
-  //     ) {
-  //       console.log("border");
-  //       this.bullet = null;
-  //       this.isFiring = false;
-  //       console.log("here");
-  //     }
-  //   }
-  // }
 }
