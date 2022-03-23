@@ -86,11 +86,11 @@ export default class Bullet {
       result.res = false;
     } else {
       gameObjects.forEach((gameObject) => {
-        let [x1, y1] = [
+        const [x1, y1] = [
           Math.floor(this.x / cellSize),
           Math.floor(this.y / cellSize),
         ];
-        let [x2, y2] = [
+        const [x2, y2] = [
           Math.floor((this.x + bulletSize) / cellSize),
           Math.floor((this.y + bulletSize) / cellSize),
         ];
