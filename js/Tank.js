@@ -1,14 +1,14 @@
 import Bullet from "./Bullet.js";
 import { map } from "./map.js";
 import { cellSize, gameTimerInterval, directionSet } from "./conf.js";
+import Point from "./Point.js";
 
 export default class Tank {
   constructor(x, y, mark) {
     this.elem = document.createElement("div");
-    this.x = x;
-    this.y = y;
-    this.mapRow = this.x / cellSize;
-    this.mapColumn = this.y / cellSize;
+    this.pos = new Point(x, y);
+    this.mapRow = this.pos.x / cellSize;
+    this.mapColumn = this.pos.y / cellSize;
     this.direction = "up";
     this.previousState = "up";
     this.mark = mark;
@@ -26,6 +26,7 @@ export default class Tank {
   }
 
   move() {
+    // this.changeDirection();
     switch (this.direction) {
       case "up":
         this.rotateTank(0);
@@ -35,7 +36,7 @@ export default class Tank {
         ) {
           map[this.mapColumn - 1][this.mapRow] = this.mark;
           map[this.mapColumn][this.mapRow] = 0;
-          this.y -= cellSize;
+          this.pos.y -= cellSize;
           this.mapColumn -= 1;
         } else {
           this.changeDirection();
@@ -50,7 +51,7 @@ export default class Tank {
         ) {
           map[this.mapColumn + 1][this.mapRow] = this.mark;
           map[this.mapColumn][this.mapRow] = 0;
-          this.y += cellSize;
+          this.pos.y += cellSize;
           this.mapColumn += 1;
         } else {
           this.changeDirection();
@@ -65,7 +66,7 @@ export default class Tank {
         ) {
           map[this.mapColumn][this.mapRow - 1] = this.mark;
           map[this.mapColumn][this.mapRow] = 0;
-          this.x -= cellSize;
+          this.pos.x -= cellSize;
           this.mapRow -= 1;
         } else {
           this.changeDirection();
@@ -80,7 +81,7 @@ export default class Tank {
         ) {
           map[this.mapColumn][this.mapRow + 1] = this.mark;
           map[this.mapColumn][this.mapRow] = 0;
-          this.x += cellSize;
+          this.pos.x += cellSize;
           this.mapRow += 1;
         } else {
           this.changeDirection();
@@ -94,8 +95,8 @@ export default class Tank {
   }
 
   update() {
-    this.elem.style["top"] = `${this.y}px`;
-    this.elem.style["left"] = `${this.x}px`;
+    this.elem.style["top"] = `${this.pos.y}px`;
+    this.elem.style["left"] = `${this.pos.x}px`;
   }
 
   rotateTank(degrees) {
@@ -107,6 +108,23 @@ export default class Tank {
     setTimeout(() => {
       this.isFiring = false;
     }, gameTimerInterval);
-    return new Bullet(this.x, this.y, this.direction, this);
+    return new Bullet(this.pos.x, this.pos.y, this.direction, this);
+    // return this.bullet;
   }
+
+  // validateBorder() {
+  //   if (this.bullet) {
+  //     if (
+  //       this.bullet.x < 0 ||
+  //       this.bullet.y < 0 ||
+  //       this.bullet.y > map.length * cellSize ||
+  //       this.bullet.x >= map[0].length * cellSize
+  //     ) {
+  //       console.log("border");
+  //       this.bullet = null;
+  //       this.isFiring = false;
+  //       console.log("here");
+  //     }
+  //   }
+  // }
 }
